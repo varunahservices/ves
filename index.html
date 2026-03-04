@@ -1,624 +1,105 @@
+# 📁 Project Structure (Multi‑Page Professional Website)
+
+```
+varunah-website/
+│
+├── index.html
+├── services.html
+├── projects.html
+├── contact.html
+└── style.css
+```
+
+---
+
+# ============================
+# index.html
+# ============================
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varunah Engineering Services | Industry 4.0 & Custom Automation</title>
+    <title>Industrial Automation Company in Gujarat | Varunah Engineering Services</title>
+    <meta name="description"
+        content="Industrial automation, custom machinery and IoT integration services for manufacturing plants in Gujarat and India.">
+    <link rel="stylesheet" href="style.css">
 
-    <!-- External Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SEO STRUCTURED DATA -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EngineeringCompany",
+  "name": "Varunah Engineering Services",
+  "url": "https://www.varunah.in",
+  "logo": "https://www.varunah.in/logo.png",
+  "description": "Industrial automation, IoT integration and custom machine manufacturing company in Gujarat, India.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Gujarat",
+    "addressCountry": "India"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+91-XXXXXXXXXX",
+    "contactType": "customer service"
+  }
+}
+</script>
 
-    <!-- Firebase Cloud Integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-        window.dbReady = false;
-
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'varunah-eng-final-suite';
-        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        if (firebaseConfig) {
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-
-            const initAuth = async () => {
-                try {
-                    if (authToken) {
-                        await signInWithCustomToken(auth, authToken);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (err) { console.error("Cloud Connection Error:", err); }
-            };
-
-            initAuth();
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    window.dbReady = true;
-                    const btn = document.getElementById('submitBtn');
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerText = "Submit Technical Enquiry";
-                        btn.classList.replace('bg-slate-400', 'bg-slate-900');
-                    }
-                }
-            });
-
-            window.saveLead = async (data) => {
-                if (!auth.currentUser) return false;
-                try {
-                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'enquiries');
-                    await addDoc(colRef, {
-                        ...data,
-                        createdAt: serverTimestamp(),
-                        status: 'New',
-                        userId: auth.currentUser.uid
-                    });
-                    return true;
-                } catch (err) { return false; }
-            };
-
-            window.loadLeads = (callback) => {
-                if (!auth.currentUser) return;
-                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'enquiries');
-                return onSnapshot(colRef, (snapshot) => {
-                    const leads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    leads.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                    callback(leads);
-                });
-            };
-        }
-    </script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        /* Mandatory Chart Container Styling */
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            padding: 1rem;
-        }
-
-        .service-tab.active {
-            background-color: #0f172a;
-            color: white;
-            border-color: #0f172a;
-        }
-
-        @keyframes pulse-soft {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        .animate-pulse-soft {
-            animation: pulse-soft 3s infinite;
-        }
-    </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900">
+<body>
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-slate-200 py-4 px-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div
-                    class="bg-slate-900 text-amber-500 w-8 h-8 flex items-center justify-center rounded font-black text-xl">
-                    V</div>
-                <div class="font-black text-lg tracking-tighter">VARUNAH</div>
-            </div>
-            <div class="hidden md:flex gap-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                <a href="#services" class="hover:text-amber-500 transition-colors">Services</a>
-                <a href="#case-studies" class="hover:text-amber-500 transition-colors">Machine Focus</a>
-                <a href="#process" class="hover:text-amber-500 transition-colors">IOT Edge</a>
-                <a href="#contact" class="bg-slate-900 text-white px-4 py-2 rounded font-bold">Contact Us</a>
-            </div>
+    <header>
+        <div class="container">
+            <nav>
+                <div><strong>Varunah Engineering Services</strong></div>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
         </div>
-    </nav>
-
-    <!-- Hero -->
-    <header class="bg-slate-900 py-24 px-6 text-white text-center relative overflow-hidden">
-        <div class="max-w-4xl mx-auto relative z-10">
-            <div
-                class="inline-flex items-center gap-2 bg-amber-500 text-slate-900 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest mb-6">
-                🚀 10+ Successful Industrial Projects
-            </div>
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">Advanced <span
-                    class="text-amber-500">Automation</span> & IOT</h1>
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                Custom automation, Industry 4.0 IOT integration, and precision CNC solutions. We build specialized
-                machines and provide the expert consulting needed to scale your operations.
-            </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="#contact"
-                    class="px-10 py-5 bg-amber-500 text-slate-900 font-black rounded-xl hover:scale-105 transition-all shadow-xl shadow-amber-500/20">Talk
-                    to an Engineer</a>
-                <a href="#services"
-                    class="px-10 py-5 border border-slate-700 text-white font-bold rounded-xl hover:bg-slate-800 transition-all">Explore
-                    Services</a>
-            </div>
-        </div>
-        <div class="absolute inset-0 opacity-10 pointer-events-none"
-            style="background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 30px 30px;"></div>
     </header>
 
-    <!-- Service Ecosystem -->
-    <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-black mb-4 uppercase tracking-tighter">Service Ecosystem</h2>
-            <p class="text-slate-500">Integrated solutions for modern manufacturing floors.</p>
+    <section class="hero">
+        <div class="container">
+            <h1>Advanced Industrial Automation & Engineering Solutions</h1>
+            <p>Custom automation systems, Industry 4.0 IoT integration and precision machine development for
+                manufacturing plants.</p>
+            <a href="contact.html" class="btn">Talk to an Engineer</a>
         </div>
+    </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <div class="lg:col-span-4 space-y-3">
-                <button onclick="updateView('machines', this)"
-                    class="service-tab active w-full p-6 border rounded-2xl text-left font-bold text-xs uppercase tracking-widest flex justify-between items-center group">
-                    Custom Automation <span>⚙️</span>
-                </button>
-                <button onclick="updateView('gasket', this)"
-                    class="service-tab w-full p-6 border rounded-2xl text-left font-bold text-xs uppercase tracking-widest flex justify-between items-center group">
-                    Gasket CNC Tech <span>📐</span>
-                </button>
-                <button onclick="updateView('iot', this)"
-                    class="service-tab w-full p-6 border rounded-2xl text-left font-bold text-xs uppercase tracking-widest flex justify-between items-center group">
-                    IOT Industry 4.0 <span>📡</span>
-                </button>
-                <button onclick="updateView('consulting', this)"
-                    class="service-tab w-full p-6 border rounded-2xl text-left font-bold text-xs uppercase tracking-widest flex justify-between items-center group">
-                    Consulting <span>🤝</span>
-                </button>
-                <button onclick="updateView('spares', this)"
-                    class="service-tab w-full p-6 border rounded-2xl text-left font-bold text-xs uppercase tracking-widest flex justify-between items-center group">
-                    Parts & Spares <span>🔧</span>
-                </button>
-            </div>
-            <div
-                class="lg:col-span-8 bg-white p-10 rounded-3xl border shadow-sm flex flex-col justify-between min-h-[500px]">
-                <div id="service-text" class="mb-8 animate-fadeIn">
-                    <!-- Loaded via JS -->
+    <section class="section">
+        <div class="container">
+            <h2>Why Choose Us</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Custom Automation</h3>
+                    <p>Production-focused machine design tailored to plant needs.</p>
                 </div>
-                <div class="chart-container">
-                    <canvas id="pillarChart"></canvas>
+                <div class="card">
+                    <h3>IoT & Smart Monitoring</h3>
+                    <p>Real-time dashboards and predictive maintenance systems.</p>
+                </div>
+                <div class="card">
+                    <h3>Engineering Consulting</h3>
+                    <p>Complete technical consultation for scaling manufacturing.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Machine Spotlights (Case Studies) -->
-    <section id="case-studies" class="py-24 bg-slate-900 text-white px-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="mb-16">
-                <h2 class="text-4xl font-black mb-4 uppercase tracking-tight">Machine Spotlights</h2>
-                <p class="text-slate-400 max-w-xl">Deep-dive into our specialized custom machine architectures.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <!-- Wire Machine -->
-                <div
-                    class="bg-slate-800 p-10 rounded-3xl border border-slate-700 hover:border-amber-500 transition-all group">
-                    <div class="text-amber-500 font-bold text-xs uppercase tracking-widest mb-4">Custom Automation</div>
-                    <h3 class="text-2xl font-bold mb-6">Wire Straightening & Auto-Cutting</h3>
-                    <p class="text-slate-400 text-sm mb-8 leading-relaxed">
-                        A fully synchronized machine that takes wire coils, straightens them through a multi-roller
-                        assembly, and uses a high-speed servo-cutter for precise lengths.
-                        <strong>Feature Highlight:</strong> Includes a specific bending angle automation module for
-                        integrated wire shaping.
-                    </p>
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                            <span class="block text-xl font-bold text-white">99.9%</span>
-                            <span class="text-[10px] text-slate-500 uppercase font-bold">Cutting Accuracy</span>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                            <span class="block text-xl font-bold text-white">45° - 180°</span>
-                            <span class="text-[10px] text-slate-500 uppercase font-bold">Auto-Bending Range</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gasket CNC -->
-                <div
-                    class="bg-slate-800 p-10 rounded-3xl border border-slate-700 hover:border-amber-500 transition-all group">
-                    <div class="text-sky-400 font-bold text-xs uppercase tracking-widest mb-4">CNC Specialized</div>
-                    <h3 class="text-2xl font-bold mb-6">Customized Gasket CNC (Non-Die)</h3>
-                    <p class="text-slate-400 text-sm mb-8 leading-relaxed">
-                        Engineered for the fluid sealing industry. This machine uses a high-frequency vibrating knife
-                        head to cut <strong>PTFE, Non-Asbestos, and Rubber</strong> gaskets without needing expensive
-                        physical dies.
-                    </p>
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                            <span class="block text-xl font-bold text-white">Zero</span>
-                            <span class="text-[10px] text-slate-500 uppercase font-bold">Die / Tooling Cost</span>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                            <span class="block text-xl font-bold text-white">&lt; 0.1mm</span>
-                            <span class="text-[10px] text-slate-500 uppercase font-bold">Tolerance Level</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- IOT Deep-Dive -->
-    <section id="process" class="py-24 px-6 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-                <h2 class="text-4xl font-black text-slate-900 mb-6 uppercase tracking-tight">Industry 4.0: <br><span
-                        class="text-amber-600">The Varunah IOT Edge</span></h2>
-                <p class="text-slate-600 mb-8 leading-relaxed">
-                    We don't just build machines; we give them a voice. Our IOT services integrate smart sensors into
-                    your existing or new machinery to provide actionable data in real-time.
-                </p>
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center font-bold text-slate-900 shrink-0">
-                            01</div>
-                        <div>
-                            <h4 class="font-bold text-slate-900 mb-1 uppercase text-xs tracking-widest">Predictive
-                                Maintenance</h4>
-                            <p class="text-sm text-slate-500 italic">Get alerted before a motor fails or a cutting blade
-                                dulls.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center font-bold text-slate-900 shrink-0">
-                            02</div>
-                        <div>
-                            <h4 class="font-bold text-slate-900 mb-1 uppercase text-xs tracking-widest">Remote
-                                Performance Logs</h4>
-                            <p class="text-sm text-slate-500 italic">Monitor production throughput from any mobile
-                                device globally.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center font-bold text-slate-900 shrink-0">
-                            03</div>
-                        <div>
-                            <h4 class="font-bold text-slate-900 mb-1 uppercase text-xs tracking-widest">Material Waste
-                                Tracking</h4>
-                            <p class="text-sm text-slate-500 italic">Precision counters tracking yield ratios for
-                                expensive PTFE sheets.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-slate-100 p-8 rounded-3xl border-2 border-dashed border-slate-300 relative overflow-hidden">
-                <div class="flex items-center justify-between mb-6">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Live Simulation
-                        Status</span>
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-green-500"><span
-                            class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> ONLINE</span>
-                </div>
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between">
-                        <span class="text-xs font-bold text-slate-600 uppercase">Machine ID: VM-042</span>
-                        <span class="text-xs font-bold text-amber-500">98.4% Efficiency</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between">
-                        <span class="text-xs font-bold text-slate-600 uppercase">Cycle Time</span>
-                        <span class="text-xs font-bold text-slate-900">2.4 Seconds</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-2">Yield Forecast</span>
-                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-amber-500 w-[92%]"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-8 text-center">
-                    <p class="text-[10px] text-slate-400 italic">All Varunah Custom Machines come with optional
-                        IOT-ready dashboards.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact & Details Section -->
-    <section id="contact" class="py-24 px-6 bg-slate-50 border-t border-slate-200">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-
-            <!-- Contact Details Sidebar -->
-            <div class="space-y-8">
-                <div>
-                    <h2 class="text-4xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Connect With Us</h2>
-                    <p class="text-slate-500 mb-8">Discuss your specific automation requirements or material cutting
-                        needs with our lead engineers.</p>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div
-                        class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-colors">
-                        <div class="text-amber-500 text-xl mb-3">📍</div>
-                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Office & Works
-                        </h4>
-                        <p class="text-sm font-bold text-slate-700 leading-relaxed">Varunah Engineering
-                            Services,<br>B-401,Sky Marc,
-                            <br>Vemali, Vadodara, Gujarat - 390008
-                        </p>
-                    </div>
-
-                    <div
-                        class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-colors">
-                        <div class="text-amber-500 text-xl mb-3">📞</div>
-                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Phone &
-                            WhatsApp</h4>
-                        <a href="tel:+919925022472"
-                            class="text-sm font-bold text-slate-700 hover:text-amber-500 transition-colors">+91 99250
-                            22472</a>
-                    </div>
-
-                    <div
-                        class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-colors">
-                        <div class="text-amber-500 text-xl mb-3">✉️</div>
-                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Technical
-                            Inquiry</h4>
-                        <a href="mailto:varunahservices@gmail.com"
-                            class="text-sm font-bold text-slate-700 hover:text-amber-500 transition-colors">varunahservices@gmail.com</a>
-                    </div>
-
-                    <div
-                        class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-500 transition-colors">
-                        <div class="text-amber-500 text-xl mb-3">🔗</div>
-                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Professional
-                            Networking</h4>
-                        <a href="https://www.linkedin.com/in/varunah-engineering-services/" target="_blank"
-                            class="text-sm font-bold text-slate-700 hover:text-amber-600">LinkedIn Profile</a>
-                    </div>
-                </div>
-
-                <div class="p-8 bg-slate-900 rounded-3xl text-white">
-                    <h5 class="text-xs font-black uppercase tracking-widest mb-4">Availability</h5>
-                    <div class="flex justify-between text-xs border-b border-slate-800 pb-2 mb-2">
-                        <span>Monday - Saturday</span>
-                        <span class="text-amber-500 font-bold">09:00 AM - 06:00 PM</span>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span>Sunday</span>
-                        <span class="text-slate-500 italic uppercase">Emergency Support Only</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enquiry Form (Cloud Connected) -->
-            <div class="bg-white p-10 md:p-14 rounded-3xl shadow-xl border border-slate-200">
-                <h3 class="text-2xl font-black mb-8">Technical Project Enquiry</h3>
-                <form id="enquiryForm" class="space-y-6" onsubmit="handleFormSubmit(event)">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="name" placeholder="Full Name" required
-                            class="w-full bg-slate-50 border p-4 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                        <input type="email" id="email" placeholder="Business Email" required
-                            class="w-full bg-slate-50 border p-4 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                    </div>
-                    <select id="interest"
-                        class="w-full bg-slate-50 border p-4 rounded-xl text-sm font-bold text-slate-700">
-                        <option>Wire Automation Machine</option>
-                        <option>No-Die Gasket CNC (PTFE)</option>
-                        <option>IOT Industry 4.0 Setup</option>
-                        <option>Engineering Consulting / DFM</option>
-                        <option>Parts & Spares Supply</option>
-                    </select>
-                    <textarea id="message" rows="4" placeholder="Briefly describe your project goals..." required
-                        class="w-full bg-slate-50 border p-4 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
-
-                    <button type="submit" id="submitBtn" disabled
-                        class="w-full bg-slate-400 text-white font-black py-5 rounded-xl uppercase tracking-widest text-xs transition-all">Connecting
-                        to Database...</button>
-                    <div id="status" class="hidden p-4 rounded-xl text-center font-bold text-sm"></div>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Secure Admin Portal -->
-    <section class="py-12 bg-slate-50 border-t">
-        <div class="max-w-7xl mx-auto px-6">
-            <div id="gate" class="text-center">
-                <button onclick="handleAdmin()"
-                    class="text-slate-300 hover:text-slate-900 text-[10px] font-black uppercase tracking-[0.4em] transition-colors">Admin
-                    Portal Access</button>
-            </div>
-            <div id="admin-panel" class="hidden">
-                <div class="flex justify-between items-end mb-8">
-                    <h3 class="text-2xl font-black uppercase tracking-tighter">Live Enquiry Dashboard</h3>
-                    <button onclick="location.reload()"
-                        class="bg-white border px-4 py-1 text-[10px] font-bold uppercase rounded hover:bg-slate-100 transition-colors">Refresh
-                        Feed</button>
-                </div>
-                <div class="bg-white rounded-xl border shadow-sm overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-900 text-white uppercase text-[9px] tracking-widest">
-                            <tr>
-                                <th class="p-4">Time</th>
-                                <th class="p-4">Name</th>
-                                <th class="p-4">Interest</th>
-                                <th class="p-4">Message</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leadData" class="divide-y divide-slate-100">
-                            <!-- Cloud Leads -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-slate-900 py-16 text-center text-slate-600 text-[10px] uppercase tracking-[0.4em]">
-        &copy; 2026 Varunah Engineering Services • Industrial Innovation • Secure Cloud Data
+    <footer>
+        <p>© 2026 Varunah Engineering Services | Gujarat, India</p>
     </footer>
 
-    <!-- JS Logic -->
-    <script>
-        // ADMIN CONFIG
-        const ADMIN_PASSWORD = "Divit2026";
-
-        const serviceData = {
-            machines: {
-                title: "Custom Machine Automation",
-                p: "We solve unique production line problems that standard machinery cannot address.Our flagship is the<strong>Wire Straightening & Cutting Machine</strong> with integrated bending angle logic, reducing manual labor by up to 90 %.",
-                bullets: ["Servo-Controlled Cutting Precision", "Multi-Stage Straightening Assembly", "Integrated Shaping & Bending Angle", "100% Reliability for High-Tensile Wire"],
-                caption: "Productivity Gains: Custom Automation vs. Market Standard",
-                chart: { type: 'bar', labels: ['Manual', 'Std', 'Varunah'], data: [15, 60, 240], label: 'Output / Hour' }
-            },
-            gasket: {
-                title: "Die-Less CNC Gasket Cutting",
-                p: "Precision cutting for <strong>PTFE, Non-Asbestos, and Silicone</strong> materials. Our 'No-Die' technology allows you to produce complex shapes instantly from a CAD file without the cost of physical toolings.",
-                bullets: ["Zero Lead-Time for New Designs", "Material Optimization Software", "High-Frequency Vibrating Blade Tech", "Extreme Tolerance Precision"],
-                caption: "Cost Savings Analysis: Die-Less CNC Technology",
-                chart: {
-                    type: 'radar',
-                    labels: ['Tooling Savings', 'Setup Speed', 'Accuracy', 'Versatility', 'Material Yield'],
-                    data: [100, 95, 98, 92, 88],
-                    label: 'Performance Index'
-                }
-            },
-            iot: {
-                title: "Industry 4.0 IOT Integration",
-                p: "Modern engineering requires data. We provide IOT retrofitting for old machines and smart-dashboards for our new builds. Monitor everything from motor heat to production uptime from your smartphone.",
-                bullets: ["Real-time Cloud Data Logging", "Predictive Maintenance Alerts", "Mobile Uptime Dashboards", "Energy Consumption Auditing"],
-                caption: "Uptime Simulation: IOT Enabled Predictive Maintenance",
-                chart: {
-                    type: 'line',
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
-                    data: [75, 82, 91, 95, 98, 99],
-                    label: 'Uptime Percentage %'
-                }
-            },
-            consulting: {
-                title: "Strategic Engineering Consulting",
-                p: "Our consulting arm handles the 'Why' and the 'How'. We provide full product development cycles, including Design for Manufacturability (DFM) and Advanced Simulations.",
-                bullets: ["Finite Element Analysis (FEA)", "Design for Assembly Optimization", "Cost-to-Benefit Manufacturing Audits", "New Product Prototyping"],
-                caption: "Consulting Impact: Time-to-Market Reduction",
-                chart: {
-                    type: 'bar',
-                    labels: ['Concept', 'Design', 'Validation', 'Production'],
-                    data: [80, 75, 90, 85],
-                    label: 'Efficiency % Improvement'
-                }
-            },
-            spares: {
-                title: "Precision Spares & Parts Supply",
-                p: "Minimize downtime with our high-grade spare parts pipeline. We specialize in hard-to-find components and material-certified spares for custom machinery.",
-                bullets: ["Material-Certified Component Supply", "Inventory Management Consulting", "Reverse-Engineered Spares", "24/7 Supply Pipeline"],
-                caption: "Reliability Factor: Varunah Spares vs OEM Standard",
-                chart: {
-                    type: 'bar',
-                    labels: ['Durability', 'Fitment', 'Material Grade', 'Availability'],
-                    data: [115, 100, 130, 140],
-                    label: 'Metric Index (Base 100)'
-                }
-            }
-        };
-
-        let activeChart = null;
-
-        function updateView(key, el) {
-            document.querySelectorAll('.service-tab').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-
-            const d = serviceData[key];
-            const content = document.getElementById('service-text');
-            content.innerHTML = `<h3 class="text-2xl font-black mb-4 uppercase tracking-tighter">${d.title}</h3><p class="text-slate-600 text-sm leading-relaxed">${d.p}</p>`;
-
-            const ctx = document.getElementById('pillarChart').getContext('2d');
-            if (activeChart) activeChart.destroy();
-            activeChart = new Chart(ctx, {
-                type: d.chart.type,
-                data: {
-                    labels: d.chart.labels,
-                    datasets: [{
-                        label: d.chart.label,
-                        data: d.chart.data,
-                        backgroundColor: d.chart.type === 'radar' ? 'rgba(245, 158, 11, 0.2)' : '#0f172a',
-                        borderColor: '#f59e0b',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('status');
-            btn.disabled = true;
-            btn.innerText = "Syncing with Cloud...";
-
-            const lead = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                interest: document.getElementById('interest').value,
-                message: document.getElementById('message').value
-            };
-
-            const ok = await window.saveLead(lead);
-            if (ok) {
-                status.innerText = "SUCCESS! Enquiry Logged In Dashboard.";
-                status.className = "p-4 rounded-xl text-center font-bold text-sm bg-green-100 text-green-700 block animate-pulse";
-                e.target.reset();
-            } else {
-                status.innerText = "Error. Please check connection.";
-                status.className = "p-4 rounded-xl text-center font-bold text-sm bg-red-100 text-red-700 block";
-            }
-            btn.disabled = false;
-            btn.innerText = "Submit Technical Enquiry";
-        }
-
-        function handleAdmin() {
-            const pw = prompt("Admin Password:");
-            if (pw === ADMIN_PASSWORD) {
-                document.getElementById('gate').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                window.loadLeads((ls) => {
-                    document.getElementById('leadData').innerHTML = ls.map(l => `
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-4 text-[9px] text-slate-400 font-bold">${l.createdAt ? new Date(l.createdAt.seconds * 1000).toLocaleString() : 'Saving...'}</td>
-                            <td class="p-4 font-bold text-slate-900">${l.name}</td>
-                            <td class="p-4"><span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">${l.interest}</span></td>
-                            <td class="p-4 text-xs text-slate-600">${l.message}</td>
-                        </tr>`).join('');
-                });
-            } else if (pw !== null) alert("Incorrect Password.");
-        }
-
-        window.onload = () => updateView('machines', document.querySelector('.service-tab.active'));
-    </script>
 </body>
 
 </html>
